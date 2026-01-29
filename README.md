@@ -2,6 +2,7 @@ Tracing tool for py. Copy paste into main. Trace. Have Fun!
 
 # Hack Usage
 ```python
+# README https://github.com/ko10ok/ttpy
 import httpx
 exec(httpx.get('https://raw.githubusercontent.com/ko10ok/ttpy/refs/heads/main/trace.py').text)
 
