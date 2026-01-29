@@ -13,18 +13,24 @@ class Record:
 
 
 class FunctionInterceptor:
-    def __init__(self):
+    def __init__(self, include_file_fn=None, min_time_ms=10):
         self.call_stack: list[Record] = []
+
+        self.include_file_fn = include_file_fn
+        if self.include_file_fn is None:
+            self.include_file_fn = lambda filename: (
+                'scenarios/' in filename
+                or 'helpers/' in filename
+                or 'interfaces/' in filename
+                or 'contexts/' in filename
+            )
+
+        self.min_time_ms = min_time_ms
 
     def trace_calls(self, frame, event, arg):
         filename = frame.f_code.co_filename
-        should_log = (
-            'scenarios/' in filename
-            or 'helpers/' in filename
-            # or 'interfaces/' in filename
-            or 'contexts/' in filename
-        )
-        min_time_ms = 100
+        should_log = self.include_file_fn(filename)
+        min_time_ms = self.min_time_ms
 
         if event == 'call' and should_log:
             func_name = frame.f_code.co_name
@@ -49,8 +55,3 @@ class FunctionInterceptor:
                 self.call_stack.pop()
 
         return self.trace_calls
-
-
-# Usage
-interceptor = FunctionInterceptor()
-sys.settrace(interceptor.trace_calls)
