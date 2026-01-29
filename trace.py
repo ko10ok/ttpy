@@ -24,6 +24,7 @@ class FunctionInterceptor:
             # or 'interfaces/' in filename
             or 'contexts/' in filename
         )
+        min_time_ms = 100
 
         if event == 'call' and should_log:
             func_name = frame.f_code.co_name
@@ -38,7 +39,7 @@ class FunctionInterceptor:
             func_name = frame.f_code.co_name
             filename = frame.f_code.co_filename
             if self.call_stack and self.call_stack[-1].func_name == func_name:
-                if int(time() * 1000 - self.call_stack[-1].start_s * 1000) > 0:
+                if int(time() * 1000 - self.call_stack[-1].start_s * 1000) >= min_time_ms:
                     verbose = f'-> {arg}' if False else ''
                     a = "| "
                     print(
