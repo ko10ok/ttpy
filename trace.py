@@ -30,7 +30,6 @@ class FunctionInterceptor:
     def trace_calls(self, frame, event, arg):
         filename = frame.f_code.co_filename
         should_log = self.include_file_fn(filename)
-        min_time_ms = self.min_time_ms
 
         if event == 'call' and should_log:
             func_name = frame.f_code.co_name
@@ -45,7 +44,7 @@ class FunctionInterceptor:
             func_name = frame.f_code.co_name
             filename = frame.f_code.co_filename
             if self.call_stack and self.call_stack[-1].func_name == func_name:
-                if int(self.system_time() * 1000 - self.call_stack[-1].start_s * 1000) >= min_time_ms:
+                if int(self.system_time() * 1000 - self.call_stack[-1].start_s * 1000) >= self.min_time_ms:
                     verbose = f'-> {arg}' if False else ''
                     a = "| "
                     print(
